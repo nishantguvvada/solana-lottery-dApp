@@ -20,6 +20,7 @@ export default function Home() {
         <WalletModalProvider>
           <AppProvider>
             <div>
+              {/* <Background/> */}
               <Header/>
               <PotCard/>
               <Table/>

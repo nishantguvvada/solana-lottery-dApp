@@ -1,8 +1,19 @@
 "use client";
-import { WalletDisconnectButton, WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+// import { WalletDisconnectButton, WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import '@solana/wallet-adapter-react-ui/styles.css';
 import { useAppContext } from "../context/context";
 import { Toaster } from 'react-hot-toast';
+import dynamic from 'next/dynamic';
+
+const WalletMultiButtonDynamic = dynamic(
+  async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
+  { ssr: false }
+);
+
+const WalletDisconnectButtonDynamic = dynamic(
+  async () => (await import('@solana/wallet-adapter-react-ui')).WalletDisconnectButton,
+  { ssr: false }
+);
 
 const PotCard = () => { 
 
@@ -19,24 +30,25 @@ const PotCard = () => {
     lotteryPot,
     buyTicket,
     pickWinner,
-    claimPrize
+    claimPrize,
   } = useAppContext();
 
   if (!isMasterInitialized)
     return (
-      <div className="max-w-lg p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+      <div className="grid h-full gap-10 place-items-center mt-20 block max-w-full p-6 bg-white rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
         <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-          Lottery #{lotteryId}
+          Raffle #{lotteryId}
         </h5>
         {connected ? (
           <>
             <button onClick={initMaster} type="button" className="w-60 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Initialize master</button>
           </>
         ) : (
-          // Wallet multibutton goes here\
-          <div>
-            <WalletMultiButton/>
-            <WalletDisconnectButton/>
+          <div className="max-w-lg p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+            <div className="flex gap-4 md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+              <WalletMultiButtonDynamic/> {/* <WalletMultiButton/> */}
+              <WalletDisconnectButtonDynamic/> {/* <WalletDisconnectButton/> */}
+            </div>
           </div>
         )}
       </div>
@@ -109,8 +121,8 @@ const PotCard = () => {
           </>
         ) : (
           <div className="flex gap-4 md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-            <div><WalletMultiButton/></div>
-            <div><WalletDisconnectButton/></div>
+            <WalletMultiButtonDynamic/> {/* <WalletMultiButton/> */}
+            <WalletDisconnectButtonDynamic/> {/* <WalletDisconnectButton/> */}
           </div>
         )}
       </div>

@@ -1,4 +1,4 @@
-import { AnchorProvider, BN, Program } from "@project-serum/anchor";
+import { AnchorProvider, BN, Program, setProvider } from "@project-serum/anchor";
 import { PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 import IDL from "./idl.json";
@@ -14,6 +14,7 @@ export const getProgram = (connection, wallet) => {
   const provider = new AnchorProvider(connection, wallet, {
     commitment: "confirmed",
   });
+  setProvider(provider);
   const program = new Program(IDL, PROGRAM_ID, provider);
   return program;
 };

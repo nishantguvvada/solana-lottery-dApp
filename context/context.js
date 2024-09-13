@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import { BN } from "@project-serum/anchor";
 import { SystemProgram, LAMPORTS_PER_SOL } from "@solana/web3.js";
-import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
+import { useAnchorWallet, useConnection, useWallet } from "@solana/wallet-adapter-react";
 import {
   getLotteryAddress,
   getMasterAddress,
@@ -10,10 +10,10 @@ import {
   getTicketAddress,
   getTotalPrize
 } from "../utils/program";
-import { confirmTx, mockWallet } from "@/utils/helper";
 import toast from "react-hot-toast";
+import { mockWallet } from "@/utils/helper";
 
-export const AppContext = createContext();
+export const AppContext = createContext(); 
 
 export const AppProvider = ({ children }) => {
   const [masterAddress, setMasterAddress] = useState(); // store master address
@@ -119,15 +119,26 @@ export const AppProvider = ({ children }) => {
   // Call solana program instructions
   const initMaster = async () => {
     try {
-      const txHash = await program.methods
+      const transaction = await program.methods
       .initMaster()
       .accounts({
         master: masterAddress, 
         payer: wallet.publicKey, 
         systemProgram: SystemProgram.programId
-      })
-      .rpc()
-      await confirmTx(txHash, connection);
+      }).transaction();
+
+      console.log("Transaction", transaction);
+
+      transaction.feePayer = wallet.publicKey;
+      transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+      const signedTx = await wallet.signTransaction(transaction);
+      console.log("Signed Transaction", signedTx);
+      const txId = await connection.sendRawTransaction(signedTx.serialize());
+      console.log("Transaction ID", txId);
+      const signature = await connection.confirmTransaction(txId, "confirmed");
+
+      console.log("Transaction Signature", signature);
+
       updateState();
       toast.success("Initialized Master!");
     } catch(err) {
@@ -140,16 +151,26 @@ export const AppProvider = ({ children }) => {
   const createLottery = async () => {
     try {
       const lotteryAddress = await getLotteryAddress(lotteryId + 1);
-      const txHash = await program.methods
-      .createRaffle(new BN(1).mul(new BN(LAMPORTS_PER_SOL))) // change BN(variable) to update entrance fee
-      .accounts({
+      const transaction = await program.methods.createRaffle(
+        new BN(1).mul(new BN(LAMPORTS_PER_SOL)) // change BN(variable) to update entrance fee
+      ) .accounts({
         raffle: lotteryAddress,
         master: masterAddress,
         authority: wallet.publicKey,
         systemProgram: SystemProgram.programId
-      })
-      .rpc();
-      await confirmTx(txHash, connection);
+      }).transaction();
+
+      console.log("Transaction", transaction);
+
+      transaction.feePayer = wallet.publicKey;
+      transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+      const signedTx = await wallet.signTransaction(transaction);
+      console.log("Signed Transaction", signedTx);
+      const txId = await connection.sendRawTransaction(signedTx.serialize());
+      console.log("Transaction ID", txId);
+      const signature = await connection.confirmTransaction(txId, "confirmed");
+
+      console.log("Transaction Signature", signature);
 
       updateState();
       toast.success("Raffle Created!");
@@ -163,19 +184,29 @@ export const AppProvider = ({ children }) => {
   // Buy tickets
   const buyTicket = async () => {
     try{
-      const txHash = await program.methods
+      const transaction = await program.methods
       .buyTicket(lotteryId)
       .accounts({
         raffle: lotteryAddress,
         ticket: await getTicketAddress(
           lotteryAddress,
-          lottery.lastTIcketId + 1
+          lottery.lastTicketId + 1
         ),
         buyer: wallet.publicKey,
         systemProgram: SystemProgram.programId
-      })
-      .rpc()
-      await confirmTx(txHash, connection);
+      }).transaction();
+
+      console.log("Transaction", transaction);
+
+      transaction.feePayer = wallet.publicKey;
+      transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+      const signedTx = await wallet.signTransaction(transaction);
+      console.log("Signed Transaction", signedTx);
+      const txId = await connection.sendRawTransaction(signedTx.serialize());
+      console.log("Transaction ID", txId);
+      const signature = await connection.confirmTransaction(txId, "confirmed");
+
+      console.log("Transaction Signature", signature);
       updateState();
       toast.success("Ticket bought!");
     } catch(err){
@@ -186,14 +217,24 @@ export const AppProvider = ({ children }) => {
   // Pick winner
   const pickWinner = async () => {
     try{
-      const txHash = await program.methods
+      const transaction = await program.methods
       .pickWinner(lotteryId)
       .accounts({
         raffle: lotteryAddress,
         authority: wallet.publicKey
-      })
-      .rpc();
-      await confirmTx(txHash, connection);
+      }).transaction();
+
+      console.log("Transaction", transaction);
+
+      transaction.feePayer = wallet.publicKey;
+      transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+      const signedTx = await wallet.signTransaction(transaction);
+      console.log("Signed Transaction", signedTx);
+      const txId = await connection.sendRawTransaction(signedTx.serialize());
+      console.log("Transaction ID", txId);
+      const signature = await connection.confirmTransaction(txId, "confirmed");
+
+      console.log("Transaction signature", signature);
 
       updateState();
       toast.success("Winner picked!");
@@ -205,20 +246,32 @@ export const AppProvider = ({ children }) => {
   // Claim prize
   const claimPrize = async () => {
     try{
-      const txHash = await program.methods
+      const transaction = await program.methods
       .claimPrize(lotteryId, userWinningId)
       .accounts({
         raffle: lotteryAddress,
         ticket: await getTicketAddress(lotteryAddress, userWinningId),
         authority: wallet.publicKey,
         systemProgram: SystemProgram.programId
-      })
-      .rpc()
-      await confirmTx(txHash, connection);
+      }).transaction();
+
+      console.log("Transaction", transaction);
+
+      transaction.feePayer = wallet.publicKey;
+      transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+      const signedTx = await wallet.signTransaction(transaction);
+      console.log("Signed Transaction", signedTx);
+      const txId = await connection.sendRawTransaction(signedTx.serialize());
+      console.log("Transaction ID", txId);
+      const signature = await connection.confirmTransaction(txId, "confirmed");
+
+      console.log("Transaction signature", signature);
+
       updateState();
       toast.success("Claimed the prize!");
     } catch(err) {
       console.log("Error : claimPrize : ", err.message)
+      toast.error(err.message);
     }
   }
 
@@ -229,7 +282,7 @@ export const AppProvider = ({ children }) => {
         connected: wallet?.publicKey ? true : false,
         isMasterInitialized: initialized,
         initMaster,
-        isLotteryAuthority: wallet && lottery && wallet.publicKey.equals(lotteryAddress),
+        isLotteryAuthority: wallet && lottery && wallet.publicKey.equals(lottery.authority),
         isFinished: lottery && lottery.winnerId,
         canClaim: lottery && !lottery.claimed && userWinningId,
         lotteryHistory,
@@ -238,7 +291,7 @@ export const AppProvider = ({ children }) => {
         lotteryPot,
         buyTicket,
         pickWinner,
-        claimPrize
+        claimPrize,
       }}
     >
       {children}
