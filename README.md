@@ -9,10 +9,10 @@ The Solana Lottery dApp is a decentralized application built on the Solana block
 
 [](https://github.com/nishantguvvada/solana-lottery-dApp#features)
 
--   Ticket Generation: Users can purchase lottery tickets using SOL, the native cryptocurrency of the Solana blockchain.
--   Random Number Generation: The dApp utilizes secure random number generation algorithms to determine the winning numbers for each lottery draw.
--   Ticket Validation: Participants can verify the authenticity and ownership of their lottery tickets on the blockchain.
--   Automatic Payouts: Winners receive their prize directly in their Solana wallet after the lottery draw.
+-   Lottery Generation: Users can create a lottery event having a pool for participants to win.
+-   Purchase Ticket: Users can purchase lottery tickets using SOL, the native cryptocurrency of the Solana blockchain.
+-   Pick Winner: Authority can trigger a random winner picking function outputing the lottery winner. Authority is the one who created the lottery event.
+-   Claim Prize: Winners can claim the prize pool. The prize amount will be transferred to the winner's address (public key).
 
 ## Prerequisites
 
@@ -20,7 +20,7 @@ The Solana Lottery dApp is a decentralized application built on the Solana block
 
 -   Node.js and npm: Make sure you have Node.js and npm installed on your machine.
 -   Solana Tool Suite: Install the Solana Command-Line Tool Suite to interact with the Solana blockchain.
--   Metamask or Sollet: Set up a wallet with Metamask browser extension or Sollet.io to connect to the Solana network.
+-   Metamask or Sollet or Phantom: Set up a wallet with Metamask, Phantom or Sollet.io to connect to the Solana network.
 
 ## Installation
 
@@ -35,7 +35,7 @@ The Solana Lottery dApp is a decentralized application built on the Solana block
 2.  Navigate to the project directory:
     
     ```
-    cd solana-lottery-dapp
+    cd solana-lottery
     ```
     
 3.  Install dependencies:
@@ -45,20 +45,12 @@ The Solana Lottery dApp is a decentralized application built on the Solana block
     ```
     
 4.  Set up your Solana wallet:
-    
+
     -   If you're using Metamask, connect it to the Solana network.
+    -   If you're using Phantom, connect it to the Solana dev network.
     -   If you're using Sollet, create a new wallet or import an existing one.
-5.  Update the configuration:
-    
-    Open the  `config.js`  file and set the required parameters such as contract address, fee payer, and network configuration.
-    
-6.  Build and deploy the smart contract:
-    
-    ```
-    solana program deploy dist/lottery_program.so
-    ```
-    
-7.  Start the dApp:
+
+5.  Start the dApp:
     
     ```
     npm dev start
@@ -66,7 +58,7 @@ The Solana Lottery dApp is a decentralized application built on the Solana block
     yarn dev
     ```
     
-8.  Access the dApp:
+6.  Access the dApp:
     
     Open your browser and navigate to  `http://localhost:3000`  to access the Solana Lottery dApp.
     
